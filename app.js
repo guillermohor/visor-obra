@@ -5,6 +5,7 @@ import wasmAssetUrl from 'url:./wasm/web-ifc.wasm';
 const viewerContainer = document.getElementById('viewer-container');
 const openButton = document.getElementById('btn-abrir');
 const homeButton = document.getElementById('btn-home');
+const zoomSelButton = document.getElementById('btn-zoom-sel');
 const downloadButton = document.getElementById('btn-descargar');
 const logButton = document.getElementById('btn-log');
 const fileInput = document.getElementById('file-input');
@@ -281,6 +282,14 @@ openButton.addEventListener('click', () => {
 
 homeButton?.addEventListener('click', () => {
     fitModelToScreen();
+});
+
+zoomSelButton?.addEventListener('click', () => {
+    if (state.pendingSelection) {
+        flashElement(state.pendingSelection.modelID, state.pendingSelection.expressID, { focus: true });
+    } else if (state.selectionSubset) {
+        focusOnSubset(state.selectionSubset.subset);
+    }
 });
 
 fileInput.addEventListener('change', async (event) => {
@@ -643,6 +652,7 @@ function setPendingSelection(selection) {
         window.openRecordPanel();
     }
     registerButton.disabled = false;
+    if (zoomSelButton) zoomSelButton.disabled = false;
     if (!dateInput.value) {
         dateInput.value = getTodayDateValue();
     }
@@ -661,6 +671,7 @@ function clearPendingSelection() {
     if (registerButton) {
         registerButton.disabled = true;
     }
+    if (zoomSelButton) zoomSelButton.disabled = true;
 }
 
 function resetFormControls() {
