@@ -297,20 +297,38 @@
                 <input type="checkbox" id="input-construido" checked>
                 Construido
             </label>
-            <script>
-                // Simple toggle logic inline to ensure it works immediately
-                document.getElementById('toggle-tree').addEventListener('click', () => {
-                    document.getElementById('structure-panel').classList.toggle('hidden');
-                });
-                document.getElementById('toggle-record').addEventListener('click', () => {
-                    document.getElementById('record-panel').classList.toggle('hidden-right');
-                });
+            <textarea id="input-comentario" placeholder="Comentario..." style="margin-bottom:10px;"></textarea>
+            <button id="btn-registrar" disabled>Guardar</button>
+        </div>
 
-                // Auto-open record panel when selection happens (listener will be in app.js, but we can add a helper here)
-                window.openRecordPanel = () => {
-                    document.getElementById('record-panel').classList.remove('hidden-right');
-                };
-            </script>
+        <div class="controls">
+            <button class="btn" id="btn-abrir">📂 Abrir</button>
+            <button class="btn btn-outline" id="btn-home" style="min-width: 50px; padding: 12px;">🏠</button>
+            <button class="btn btn-outline" id="btn-zoom-sel" style="min-width: 50px; padding: 12px;"
+                disabled>🔍</button>
+            <button class="btn btn-green" id="btn-descargar" disabled>⬇️ CSV</button>
+            <button class="btn" id="btn-log" style="display:none;">Log</button>
+            <div style="width: 100%; text-align: center; font-size: 10px; color: #aaa; margin-top: 5px;">v1.2 (Zoom Fix)
+            </div>
+        </div>
+    </div>
+
+    <input type="file" id="file-input" accept=".ifc, .txt, application/octet-stream" style="display:none;">
+    <script type="module" src="./app.js"></script>
+    <script>
+        // Simple toggle logic inline to ensure it works immediately
+        document.getElementById('toggle-tree').addEventListener('click', () => {
+            document.getElementById('structure-panel').classList.toggle('hidden');
+        });
+        document.getElementById('toggle-record').addEventListener('click', () => {
+            document.getElementById('record-panel').classList.toggle('hidden-right');
+        });
+
+        // Auto-open record panel when selection happens (listener will be in app.js, but we can add a helper here)
+        window.openRecordPanel = () => {
+            document.getElementById('record-panel').classList.remove('hidden-right');
+        };
+    </script>
 </body>
 
 </html>
