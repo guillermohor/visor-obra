@@ -82,7 +82,8 @@ const state = {
     pendingSelection: null,
     skipNextTouchSelect: false,
     spatialTree: null,
-    loadingModel: false
+    loadingModel: false,
+    selectionSubset: null
 };
 
 restoreLogHistory();
@@ -471,7 +472,19 @@ async function selectElement(modelID, expressID, options = {}) {
     }
     const { focusOnSelect = false, logSelection = true } = options;
     try {
-        await flashElement(modelID, expressID, { focus: focusOnSelect });
+        // Permanent highlight for selection
+        await highlightSelection(modelID, expressID);
+
+        if (focusOnSelect) {
+            // We can reuse the subset from state.selectionSubset if available, 
+            // but for simplicity, let's just focus on the element logic we have.
+            // Or better, use the flashElement logic just for focus but without the flash visual if we already highlighted.
+            // Actually, highlightSelection creates the subset, so we can focus on it.
+            if (state.selectionSubset) {
+                focusOnSubset(state.selectionSubset);
+            }
+        }
+
         const guid = await fetchGuid(modelID, expressID);
         if (!guid) {
             addLog('El elemento seleccionado no tiene GUID.', 'error');
@@ -484,6 +497,30 @@ async function selectElement(modelID, expressID, options = {}) {
     } catch (error) {
         addLog('No se pudo manejar la selección del elemento.', 'error', error);
         console.error(error);
+    }
+}
+
+async function highlightSelection(modelID, expressID) {
+    // Clear previous
+    if (state.selectionSubset) {
+        viewer.IFC.loader.ifcManager.removeSubset(state.selectionSubset.modelID, builtMaterial);
+        state.selectionSubset = null;
+    }
+
+    if (!hasModelGeometry(modelID)) {
+        return;
+    }
+
+    const subset = await viewer.IFC.loader.ifcManager.createSubset({
+        scene: viewer.context.getScene(),
+        modelID,
+        ids: [expressID],
+        removePrevious: true, // Ensure we clean up this specific model's subset if any
+        material: builtMaterial
+    });
+
+    if (subset) {
+        state.selectionSubset = { modelID, subset };
     }
 }
 
@@ -608,6 +645,10 @@ function setPendingSelection(selection) {
 
 function clearPendingSelection() {
     state.pendingSelection = null;
+    if (state.selectionSubset) {
+        viewer.IFC.loader.ifcManager.removeSubset(state.selectionSubset.modelID, builtMaterial);
+        state.selectionSubset = null;
+    }
     if (selectedGuidField) {
         selectedGuidField.textContent = 'Toca un elemento para registrarlo.';
     }
