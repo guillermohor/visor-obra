@@ -285,10 +285,10 @@ homeButton?.addEventListener('click', () => {
 });
 
 zoomSelButton?.addEventListener('click', () => {
-    if (state.pendingSelection) {
-        flashElement(state.pendingSelection.modelID, state.pendingSelection.expressID, { focus: true });
-    } else if (state.selectionSubset) {
+    if (state.selectionSubset) {
         focusOnSubset(state.selectionSubset.subset);
+    } else if (state.pendingSelection) {
+        flashElement(state.pendingSelection.modelID, state.pendingSelection.expressID, { focus: true });
     }
 });
 
@@ -720,22 +720,31 @@ function escapeCsv(value) {
 
 function focusOnSubset(subset) {
     const cameraControls = viewer.context?.ifcCamera?.cameraControls;
-    if (!subset || !subset.geometry || !cameraControls || typeof cameraControls.fitToSphere !== 'function') {
+    if (!subset || !subset.geometry || !cameraControls) {
         return;
     }
     const geometry = subset.geometry;
-    if (!geometry.boundingSphere) {
-        geometry.computeBoundingSphere();
-    }
-    const sphere = geometry.boundingSphere;
-    if (!sphere) {
+    geometry.computeBoundingBox();
+    const box = geometry.boundingBox;
+    if (!box) {
         return;
     }
-    const worldSphere = sphere instanceof Sphere ? sphere.clone() : new Sphere(sphere.center.clone(), sphere.radius);
-    worldSphere.applyMatrix4(subset.matrixWorld);
-    cameraControls.fitToSphere(worldSphere, true).catch((error) => {
-        console.warn('No se pudo ajustar la cámara al elemento seleccionado.', error);
-    });
+
+    // Clone box and apply matrix to get world coordinates
+    const worldBox = box.clone().applyMatrix4(subset.matrixWorld);
+
+    // Use fitToBox for a tighter fit than fitToSphere
+    // padding: 0.1 means 10% padding around the object
+    if (typeof cameraControls.fitToBox === 'function') {
+        cameraControls.fitToBox(worldBox, true, { paddingLeft: 0.1, paddingRight: 0.1, paddingTop: 0.1, paddingBottom: 0.1 })
+            .catch((error) => console.warn('Error en fitToBox:', error));
+    } else {
+        // Fallback to fitToSphere if fitToBox is missing
+        geometry.computeBoundingSphere();
+        const sphere = geometry.boundingSphere;
+        const worldSphere = sphere.clone().applyMatrix4(subset.matrixWorld);
+        cameraControls.fitToSphere(worldSphere, true);
+    }
 }
 
 async function fitModelToScreen() {

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'visor-ifc-cache-v2';
+const CACHE_NAME = 'visor-ifc-cache-v3';
 const OFFLINE_URLS = [
   './',
   './index.html',
