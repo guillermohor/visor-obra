@@ -285,25 +285,241 @@
             <p id="selected-guid" style="font-size:12px;color:#aaa;margin:0 0 10px 0;">Selecciona un elemento</p>
             <label style="display:block;margin-bottom:8px;">
                 <span style="font-size:12px;">Fecha</span>
-                <input type="date" id="input-fecha">
-            </label>
-            <label style="display:flex;align-items:center;gap:8px;margin-bottom:8px;font-size:13px;">
-                <input type="checkbox" id="input-construido" checked>
-                Construido
-                <script>
-                    // Simple toggle logic inline to ensure it works immediately
-                    document.getElementById('toggle-tree').addEventListener('click', () => {
-                        document.getElementById('structure-panel').classList.toggle('hidden');
-                    });
-                    document.getElementById('toggle-record').addEventListener('click', () => {
-                        document.getElementById('record-panel').classList.toggle('hidden-right');
-                    });
+                border: 1px solid rgba(255, 255, 255, 0.08);
+                border-radius: 16px;
+                color: var(--text-color);
+                display: flex;
+                flex-direction: column;
+                transition: transform 0.3s ease, opacity 0.3s ease;
+                }
 
-                    // Auto-open record panel when selection happens (listener will be in app.js, but we can add a helper here)
-                    window.openRecordPanel = () => {
-                        document.getElementById('record-panel').classList.remove('hidden-right');
-                    };
-                </script>
-</body>
+                .panel.hidden {
+                transform: translateX(-110%);
+                opacity: 0;
+                pointer-events: none;
+                }
+
+                .panel.hidden-right {
+                transform: translateX(110%);
+                opacity: 0;
+                pointer-events: none;
+                }
+
+                #structure-panel {
+                position: absolute;
+                left: 20px;
+                top: 60px;
+                bottom: 100px;
+                width: 300px;
+                max-width: 80vw;
+                padding: 16px;
+                gap: 10px;
+                z-index: 20;
+                }
+
+                #record-panel {
+                position: absolute;
+                right: 20px;
+                top: 60px;
+                width: 300px;
+                max-width: 80vw;
+                padding: 16px;
+                gap: 10px;
+                z-index: 20;
+                }
+
+                /* Bottom Controls */
+                .controls {
+                pointer-events: none;
+                padding: 20px;
+                display: flex;
+                gap: 12px;
+                justify-content: center;
+                flex-wrap: wrap;
+                }
+
+                .btn {
+                pointer-events: all;
+                padding: 12px 24px;
+                font-size: 15px;
+                border: none;
+                border-radius: 50px;
+                background: var(--accent-color);
+                color: white;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+                cursor: pointer;
+                font-weight: 600;
+                }
+
+                .btn-green {
+                background: #00b368;
+                }
+
+                .btn:disabled {
+                background: #304355;
+                color: rgba(255, 255, 255, 0.4);
+                }
+
+                /* Responsive Adjustments */
+                @media (max-width: 768px) {
+
+                #structure-panel,
+                #record-panel {
+                top: 60px;
+                bottom: auto;
+                max-height: 60vh;
+                width: calc(100vw - 40px);
+                left: 20px;
+                right: 20px;
+                }
+
+                #record-panel {
+                top: auto;
+                bottom: 100px;
+                }
+
+                .controls {
+                padding: 10px;
+                gap: 8px;
+                }
+
+                .btn {
+                flex: 1;
+                padding: 10px 16px;
+                font-size: 13px;
+                min-width: auto;
+                }
+                }
+
+                /* Common Elements */
+                input,
+                textarea,
+                button {
+                font-family: inherit;
+                }
+
+                input[type="search"],
+                input[type="date"],
+                textarea {
+                width: 100%;
+                padding: 10px;
+                border-radius: 8px;
+                border: 1px solid rgba(255, 255, 255, 0.15);
+                background: rgba(255, 255, 255, 0.05);
+                color: white;
+                box-sizing: border-box;
+                }
+
+                #tree-container {
+                flex: 1;
+                overflow-y: auto;
+                border: 1px solid rgba(255, 255, 255, 0.08);
+                border-radius: 8px;
+                padding: 8px;
+                }
+
+                .tree-node-btn {
+                width: 100%;
+                text-align: left;
+                background: transparent;
+                border: none;
+                color: #ddd;
+                padding: 4px 8px;
+                cursor: pointer;
+                }
+
+                .tree-node-btn:hover {
+                background: rgba(255, 255, 255, 0.1);
+                border-radius: 4px;
+                }
+
+                .tree-children {
+                margin-left: 12px;
+                border-left: 1px solid rgba(255, 255, 255, 0.1);
+                }
+
+                #btn-registrar {
+                width: 100%;
+                padding: 12px;
+                border-radius: 10px;
+                border: none;
+                background: #00b368;
+                color: white;
+                font-weight: bold;
+                cursor: pointer;
+                }
+                </style>
+                </head>
+
+                <body>
+                    <div id="viewer-container"></div>
+
+                    <div class="ui-layer">
+                        <div class="top-bar">
+                            <button class="panel-toggle" id="toggle-tree">🌳 Árbol</button>
+                            <div id="badge-registros">0 registros</div>
+                            <button class="panel-toggle" id="toggle-record">📝 Ficha</button>
+                        </div>
+
+                        <div id="structure-panel" class="panel hidden">
+                            <div
+                                style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+                                <strong>Estructura</strong>
+                                <button class="panel-toggle" style="padding:4px 8px;font-size:12px;"
+                                    onclick="document.getElementById('structure-panel').classList.add('hidden')">✕</button>
+                            </div>
+                            <input type="search" id="tree-search" placeholder="Buscar...">
+                            <div id="tree-container">Carga un IFC...</div>
+                        </div>
+
+                        <div id="record-panel" class="panel hidden-right">
+                            <div
+                                style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+                                <strong>Registro</strong>
+                                <button class="panel-toggle" style="padding:4px 8px;font-size:12px;"
+                                    onclick="document.getElementById('record-panel').classList.add('hidden-right')">✕</button>
+                            </div>
+                            <p id="selected-guid" style="font-size:12px;color:#aaa;margin:0 0 10px 0;">Selecciona un
+                                elemento</p>
+                            <label style="display:block;margin-bottom:8px;">
+                                <span style="font-size:12px;">Fecha</span>
+                                <input type="date" id="input-fecha">
+                            </label>
+                            <label style="display:flex;align-items:center;gap:8px;margin-bottom:8px;font-size:13px;">
+                                <input type="checkbox" id="input-construido" checked>
+                                Construido
+                            </label>
+                            <textarea id="input-comentario" placeholder="Comentario..."
+                                style="margin-bottom:10px;"></textarea>
+                            <button id="btn-registrar" disabled>Guardar</button>
+                        </div>
+
+                        <div class="controls">
+                            <button class="btn" id="btn-abrir">📂 Abrir</button>
+                            <button class="btn btn-outline" id="btn-home"
+                                style="min-width: 50px; padding: 12px;">🏠</button>
+                            <button class="btn btn-green" id="btn-descargar" disabled>⬇️ CSV</button>
+                            <button class="btn" id="btn-log" style="display:none;">Log</button>
+                        </div>
+                    </div>
+
+                    <input type="file" id="file-input" accept=".ifc, .txt, application/octet-stream"
+                        style="display:none;">
+                    <script type="module" src="./app.js"></script>
+                    <script>
+                        // Simple toggle logic inline to ensure it works immediately
+                        document.getElementById('toggle-tree').addEventListener('click', () => {
+                            document.getElementById('structure-panel').classList.toggle('hidden');
+                        });
+                        document.getElementById('toggle-record').addEventListener('click', () => {
+                            document.getElementById('record-panel').classList.toggle('hidden-right');
+                        });
+
+                        // Auto-open record panel when selection happens (listener will be in app.js, but we can add a helper here)
+                        window.openRecordPanel = () => {
+                            document.getElementById('record-panel').classList.remove('hidden-right');
+                        };
+                    </script>
+                </body>
 
 </html>
