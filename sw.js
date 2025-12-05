@@ -24,6 +24,29 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
   event.respondWith(
-    caches.match(event.request).then((cached) => cached || fetch(event.request))
+    caches.match(event.request).then((cached) => {
+      // Return cached response if found
+      if (cached) {
+        return cached;
+      }
+
+      // Otherwise fetch from network
+      return fetch(event.request).then((response) => {
+        // Check if we received a valid response
+        if (!response || response.status !== 200 || response.type !== 'basic') {
+          return response;
+        }
+
+        // Clone the response
+        const responseToCache = response.clone();
+
+        // Cache the new resource
+        caches.open(CACHE_NAME).then((cache) => {
+          cache.put(event.request, responseToCache);
+        });
+
+        return response;
+      });
+    })
   );
 });

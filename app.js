@@ -4,6 +4,7 @@ import wasmAssetUrl from 'url:./wasm/web-ifc.wasm';
 
 const viewerContainer = document.getElementById('viewer-container');
 const openButton = document.getElementById('btn-abrir');
+const homeButton = document.getElementById('btn-home');
 const downloadButton = document.getElementById('btn-descargar');
 const logButton = document.getElementById('btn-log');
 const fileInput = document.getElementById('file-input');
@@ -277,6 +278,11 @@ clearTreePanel();
 openButton.addEventListener('click', () => {
     triggerFileDialog();
 });
+
+homeButton?.addEventListener('click', () => {
+    fitModelToScreen();
+});
+
 fileInput.addEventListener('change', async (event) => {
     const [file] = event.target.files;
     if (!file) {
@@ -407,7 +413,7 @@ async function handlePointerSelection(event) {
     }
     event.preventDefault();
     addLog(`Pointer up: ${event.pointerType}`, 'info');
-    await selectElementFromScene();
+    await selectElementFromScene({ focusOnSelect: true });
 }
 
 function handleTouchPointerDown(event) {
@@ -719,6 +725,25 @@ function focusOnSubset(subset) {
     cameraControls.fitToSphere(worldSphere, true).catch((error) => {
         console.warn('No se pudo ajustar la cámara al elemento seleccionado.', error);
     });
+}
+
+async function fitModelToScreen() {
+    if (!state.activeModelId === null) return;
+    const model = viewer.context.items.ifcModels.find(m => m.modelID === state.activeModelId);
+    if (!model) return;
+
+    // Use web-ifc-viewer's built-in fit capability if available, or calculate bounding box
+    // viewer.IFC.selector.fitToSelection(state.activeModelId) might work if we select everything, 
+    // but easier to use geometry.
+
+    if (model.geometry) {
+        if (!model.geometry.boundingSphere) model.geometry.computeBoundingSphere();
+        const sphere = model.geometry.boundingSphere;
+        const cameraControls = viewer.context?.ifcCamera?.cameraControls;
+        if (sphere && cameraControls) {
+            cameraControls.fitToSphere(sphere, true);
+        }
+    }
 }
 
 function renderLogEntry(entry, rawDetail) {
