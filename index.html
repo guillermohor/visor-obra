@@ -1,39 +1,50 @@
-<!DOCTYPE html><html lang=es><script type=importmap>{"imports":{"3eBRw":"./web-ifc.98832ecb.wasm","czWhb":"./sw.js"}}</script><meta charset=UTF-8><meta name=viewport content="width=device-width, initial-scale=1.0, user-scalable=no"><meta name=theme-color content=#0b1620><link rel=manifest href=manifest.webmanifest><link rel=apple-touch-icon href=icon-192.42634e61.png><title>Visor de Obra BIM</title><style>:root{color-scheme:dark;font-family:Segoe UI,system-ui,-apple-system,sans-serif}body{background:#050a0f;margin:0;overflow:hidden}#viewer-container{background:radial-gradient(circle at top,#0e1b2b 0%,#050a0f 55%);width:100vw;height:100vh;position:relative}.controls{pointer-events:none;justify-content:center;gap:12px;display:flex;position:absolute;bottom:20px;left:20px;right:20px}.btn{pointer-events:all;color:#fff;cursor:pointer;background:#007bff;border:none;border-radius:50px;min-width:150px;padding:15px 25px;font-size:16px;transition:transform .1s;box-shadow:0 12px 30px #00000059}.btn:active{transform:scale(.97)}.btn-green{background:#00b368}.btn-outline{background:0 0;border:1px solid #ffffff4d}#btn-descargar:disabled{color:#fff6;cursor:not-allowed;background:#304355}#log-panel{backdrop-filter:blur(16px);color:#d6e8ff;pointer-events:all;background:#050a0fd9;border:1px solid #ffffff14;border-radius:16px;flex-direction:column;gap:6px;width:min(420px,100vw - 40px);max-height:65vh;padding:16px;font-size:13px;display:flex;position:absolute;top:20px;left:20px;overflow-y:auto}.log-entry{background:#ffffff0d;border-radius:8px;padding:6px 8px}.log-entry.error{color:#ffb8b8;background:#dd45602e}.log-entry.success{color:#b6ffce;background:#1bb17c2e}#tagline{color:#9ac4ff;margin:0;font-size:14px;font-weight:600}.log-entry small{opacity:.6;font-size:11px;display:block}#badge-registros{color:#8fffd9;letter-spacing:.02em;background:#00b36829;border-radius:999px;padding:10px 16px;font-weight:700;position:absolute;top:20px;right:20px}#structure-panel{backdrop-filter:blur(14px);color:#eef5ff;pointer-events:all;background:#050a0fd9;border-radius:16px;flex-direction:column;gap:10px;width:min(360px,100vw - 40px);max-height:calc(100vh - 260px);padding:16px;font-size:14px;display:flex;position:absolute;bottom:20px;left:20px;overflow:hidden}#structure-panel input[type=search]{color:#eef5ff;background:#ffffff0d;border:1px solid #ffffff26;border-radius:10px;width:100%;padding:10px;font-size:14px}#tree-container{border:1px solid #ffffff14;border-radius:10px;flex:1;padding:8px;overflow-y:auto}.tree-node{flex-direction:column;margin-bottom:4px;display:flex}.tree-node-btn{text-align:left;color:#eef5ff;cursor:pointer;background:#ffffff0a;border:none;border-radius:10px;padding:8px 10px;font-size:13px}.tree-node-btn:hover{background:#0088ff3d}.tree-children{border-left:1px solid #ffffff14;margin-left:12px;padding-left:8px}#record-panel{backdrop-filter:blur(14px);color:#eef5ff;pointer-events:all;background:#050a0fd9;border-radius:16px;flex-direction:column;gap:10px;width:min(320px,100vw - 40px);padding:16px;font-size:14px;display:flex;position:absolute;top:90px;right:20px}#record-panel label{flex-direction:column;gap:4px;font-size:13px;font-weight:600;display:flex}#record-panel input[type=date]{color:#eef5ff;background:#ffffff0d;border:1px solid #ffffff26;border-radius:10px;padding:10px;font-size:14px}#record-panel textarea{color:#eef5ff;resize:vertical;background:#ffffff0d;border:1px solid #ffffff26;border-radius:10px;min-height:70px;padding:10px;font-size:14px}#record-panel .status-toggle{align-items:center;gap:8px;font-weight:600;display:flex}#selected-guid{color:#9ac4ff;word-break:break-all;margin:0;font-size:13px}#btn-registrar{color:#fff;cursor:pointer;background:#00b368;border:none;border-radius:12px;width:100%;padding:12px 18px;font-size:15px;font-weight:600;transition:opacity .15s}#btn-registrar:disabled{opacity:.4;cursor:not-allowed}#file-input{opacity:0;pointer-events:all;border:0;width:1px;height:1px;margin:-1px;padding:0;position:absolute}@media (width<=768px){#log-panel{width:calc(100vw - 40px);max-height:35vh}#structure-panel{width:calc(100vw - 40px);max-height:none;margin:20px;position:static}#record-panel{width:calc(100vw - 40px);margin:80px 20px 0;position:static}.controls{flex-direction:column;align-items:center}.btn{width:100%}}</style><body>
-    <div id=viewer-container aria-live=polite>
-        <div id=log-panel aria-live=polite>
-            <p id=tagline>🛠️ Listo para cargar un IFC</p>
+<!DOCTYPE html><html lang=es><script type=importmap>{"imports":{"3eBRw":"./web-ifc.98832ecb.wasm","czWhb":"./sw.js"}}</script><meta charset=UTF-8><meta name=viewport content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0"><meta name=theme-color content=#0b1620><link rel=manifest href=manifest.webmanifest><link rel=apple-touch-icon href=icon-192.42634e61.png><title>Visor de Obra BIM</title><style>:root{color-scheme:dark;--bg-color:#050a0f;--panel-bg:#050a0fe6;--accent-color:#007bff;--text-color:#eef5ff;font-family:Segoe UI,system-ui,-apple-system,sans-serif}body{background:var(--bg-color);width:100vw;height:100vh;margin:0;overflow:hidden}#viewer-container{z-index:0;background:radial-gradient(circle at top,#0e1b2b 0%,#050a0f 55%);width:100%;height:100%;position:absolute;top:0;left:0}.ui-layer{pointer-events:none;z-index:10;flex-direction:column;justify-content:space-between;width:100%;height:100%;display:flex;position:absolute;top:0;left:0}.top-bar{pointer-events:none;justify-content:space-between;align-items:flex-start;padding:10px;display:flex}.panel-toggle{pointer-events:all;background:var(--panel-bg);color:#fff;cursor:pointer;backdrop-filter:blur(10px);border:1px solid #ffffff1a;border-radius:8px;align-items:center;gap:6px;padding:8px 12px;font-size:14px;display:flex}#badge-registros{pointer-events:all;color:#8fffd9;backdrop-filter:blur(4px);background:#00b36833;border-radius:20px;padding:8px 12px;font-size:13px;font-weight:700}.panel{pointer-events:all;background:var(--panel-bg);backdrop-filter:blur(16px);color:var(--text-color);border:1px solid #ffffff14;border-radius:16px;flex-direction:column;transition:transform .3s,opacity .3s;display:flex}.panel.hidden{opacity:0;pointer-events:none;transform:translate(-110%)}.panel.hidden-right{opacity:0;pointer-events:none;transform:translate(110%)}#structure-panel{z-index:20;gap:10px;width:300px;max-width:80vw;padding:16px;position:absolute;top:60px;bottom:100px;left:20px}#record-panel{z-index:20;gap:10px;width:300px;max-width:80vw;padding:16px;position:absolute;top:60px;right:20px}.controls{pointer-events:none;flex-wrap:wrap;justify-content:center;gap:12px;padding:20px;display:flex}.btn{pointer-events:all;background:var(--accent-color);color:#fff;cursor:pointer;border:none;border-radius:50px;padding:12px 24px;font-size:15px;font-weight:600;box-shadow:0 4px 12px #0000004d}.btn-green{background:#00b368}.btn:disabled{color:#fff6;background:#304355}@media (width<=768px){#structure-panel,#record-panel{width:calc(100vw - 40px);max-height:60vh;inset:60px 20px auto}#record-panel{top:auto;bottom:100px}.controls{gap:8px;padding:10px}.btn{flex:1;min-width:auto;padding:10px 16px;font-size:13px}}input,textarea,button{font-family:inherit}input[type=search],input[type=date],textarea{color:#fff;box-sizing:border-box;background:#ffffff0d;border:1px solid #ffffff26;border-radius:8px;width:100%;padding:10px}#tree-container{border:1px solid #ffffff14;border-radius:8px;flex:1;padding:8px;overflow-y:auto}.tree-node-btn{text-align:left;color:#ddd;cursor:pointer;background:0 0;border:none;width:100%;padding:4px 8px}.tree-node-btn:hover{background:#ffffff1a;border-radius:4px}.tree-children{border-left:1px solid #ffffff1a;margin-left:12px}#btn-registrar{color:#fff;cursor:pointer;background:#00b368;border:none;border-radius:10px;width:100%;padding:12px;font-weight:700}</style><body>
+    <div id=viewer-container></div>
+
+    <div class=ui-layer>
+        <div class=top-bar>
+            <button class=panel-toggle id=toggle-tree>🌳 Árbol</button>
+            <div id=badge-registros>0 registros</div>
+            <button class=panel-toggle id=toggle-record>📝 Ficha</button>
         </div>
-        <div id=badge-registros>0 registros</div>
-        <div id=structure-panel>
-            <strong>Árbol IFC</strong>
-            <input type=search id=tree-search placeholder="Buscar elemento...">
-            <div id=tree-container>Carga un IFC para ver la estructura.</div>
+
+        <div id=structure-panel class="hidden panel">
+            <div style=justify-content:space-between;align-items:center;margin-bottom:10px;display:flex>
+                <strong>Estructura</strong>
+                <button class=panel-toggle style="padding:4px 8px;font-size:12px" onclick="document.getElementById('structure-panel').classList.add('hidden')">✕</button>
+            </div>
+            <input type=search id=tree-search placeholder=Buscar...>
+            <div id=tree-container>Carga un IFC...</div>
         </div>
-        <div id=record-panel>
-            <strong>Elemento seleccionado</strong>
-            <p id=selected-guid>Toca un elemento para registrarlo.</p>
-            <label>
-                Fecha de registro
+
+        <div id=record-panel class="hidden-right panel">
+            <div style=justify-content:space-between;align-items:center;margin-bottom:10px;display:flex>
+                <strong>Registro</strong>
+                <button class=panel-toggle style="padding:4px 8px;font-size:12px" onclick="document.getElementById('record-panel').classList.add('hidden-right')">✕</button>
+            </div>
+            <p id=selected-guid style="color:#aaa;margin:0 0 10px;font-size:12px">Selecciona un elemento</p>
+            <label style=margin-bottom:8px;display:block>
+                <span style=font-size:12px>Fecha</span>
                 <input type=date id=input-fecha>
             </label>
-            <label class=status-toggle>
+            <label style=align-items:center;gap:8px;margin-bottom:8px;font-size:13px;display:flex>
                 <input type=checkbox id=input-construido checked>
-                Marcar como construido
+                Construido
             </label>
-            <label>
-                Comentario
-                <textarea id=input-comentario placeholder="Añade notas del elemento"></textarea>
-            </label>
-            <button id=btn-registrar disabled>✅ Registrar elemento</button>
+            <textarea id=input-comentario placeholder=Comentario... style=margin-bottom:10px></textarea>
+            <button id=btn-registrar disabled>Guardar</button>
+        </div>
+
+        <div class=controls>
+            <button class=btn id=btn-abrir>📂 Abrir</button>
+            <button class="btn btn-green" id=btn-descargar disabled>⬇️ CSV</button>
+            <button class=btn id=btn-log style=display:none>Log</button>
+            
         </div>
     </div>
 
-    <div class=controls>
-        <button class=btn id=btn-abrir>📂 Abrir IFC</button>
-        <button class="btn btn-green" id=btn-descargar disabled>⬇️ Descargar CSV</button>
-        <button class=btn id=btn-log>📝 Exportar log</button>
-    </div>
+    <input type=file id=file-input accept=.ifc,.txt,application/octet-stream style=display:none>
+    <script type=module src=visor-obra.7a9a209c.js></script>
+    <script>document.getElementById("toggle-tree").addEventListener("click",()=>{document.getElementById("structure-panel").classList.toggle("hidden")}),document.getElementById("toggle-record").addEventListener("click",()=>{document.getElementById("record-panel").classList.toggle("hidden-right")}),window.openRecordPanel=()=>{document.getElementById("record-panel").classList.remove("hidden-right")};</script>
 
-    <input type=file id=file-input accept=.ifc>
-    <script type=module src=visor-obra.15b94540.js></script>
 
