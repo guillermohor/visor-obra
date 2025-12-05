@@ -576,6 +576,9 @@ function setPendingSelection(selection) {
     if (selectedGuidField) {
         selectedGuidField.textContent = selection.guid;
     }
+    if (typeof window.openRecordPanel === 'function') {
+        window.openRecordPanel();
+    }
     registerButton.disabled = false;
     if (!dateInput.value) {
         dateInput.value = getTodayDateValue();

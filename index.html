@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
     <meta name="theme-color" content="#0b1620">
     <link rel="manifest" href="./manifest.json">
     <link rel="apple-touch-icon" href="./icons/icon-192.png">
@@ -11,345 +12,313 @@
         :root {
             color-scheme: dark;
             font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+            --bg-color: #050a0f;
+            --panel-bg: rgba(5, 10, 15, 0.9);
+            --accent-color: #007bff;
+            --text-color: #eef5ff;
         }
 
         body {
             margin: 0;
             overflow: hidden;
-            background: #050a0f;
+            background: var(--bg-color);
+            height: 100vh;
+            width: 100vw;
         }
 
         #viewer-container {
-            width: 100vw;
-            height: 100vh;
-            position: relative;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
             background: radial-gradient(circle at top, #0e1b2b 0%, #050a0f 55%);
+            z-index: 0;
         }
 
-        .controls {
+        /* UI Layer */
+        .ui-layer {
             position: absolute;
-            bottom: 20px;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        /* Top Bar */
+        .top-bar {
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            pointer-events: none;
+        }
+
+        .panel-toggle {
+            pointer-events: all;
+            background: var(--panel-bg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 14px;
+        }
+
+        #badge-registros {
+            pointer-events: all;
+            padding: 8px 12px;
+            border-radius: 20px;
+            background: rgba(0, 179, 104, 0.2);
+            color: #8fffd9;
+            font-weight: 700;
+            font-size: 13px;
+            backdrop-filter: blur(4px);
+        }
+
+        /* Panels */
+        .panel {
+            pointer-events: all;
+            background: var(--panel-bg);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+
+        .panel.hidden {
+            transform: translateX(-110%);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .panel.hidden-right {
+            transform: translateX(110%);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        #structure-panel {
+            position: absolute;
             left: 20px;
+            top: 60px;
+            bottom: 100px;
+            width: 300px;
+            max-width: 80vw;
+            padding: 16px;
+            gap: 10px;
+            z-index: 20;
+        }
+
+        #record-panel {
+            position: absolute;
             right: 20px;
+            top: 60px;
+            width: 300px;
+            max-width: 80vw;
+            padding: 16px;
+            gap: 10px;
+            z-index: 20;
+        }
+
+        /* Bottom Controls */
+        .controls {
+            pointer-events: none;
+            padding: 20px;
             display: flex;
             gap: 12px;
             justify-content: center;
-            pointer-events: none;
+            flex-wrap: wrap;
         }
 
         .btn {
             pointer-events: all;
-            min-width: 150px;
-            padding: 15px 25px;
-            font-size: 16px;
+            padding: 12px 24px;
+            font-size: 15px;
             border: none;
             border-radius: 50px;
-            background: #007bff;
+            background: var(--accent-color);
             color: white;
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
             cursor: pointer;
-            transition: transform 0.1s ease;
-        }
-
-        .btn:active {
-            transform: scale(0.97);
+            font-weight: 600;
         }
 
         .btn-green {
             background: #00b368;
         }
 
-        .btn-outline {
-            background: transparent;
-            border: 1px solid rgba(255,255,255,0.3);
-        }
-
-        #btn-descargar:disabled {
+        .btn:disabled {
             background: #304355;
-            color: rgba(255,255,255,0.4);
-            cursor: not-allowed;
+            color: rgba(255, 255, 255, 0.4);
         }
 
-        #log-panel {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            width: min(420px, calc(100vw - 40px));
-            max-height: 65vh;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            padding: 16px;
-            border-radius: 16px;
-            background: rgba(5, 10, 15, 0.85);
-            backdrop-filter: blur(16px);
-            color: #d6e8ff;
-            font-size: 13px;
-            pointer-events: all;
-            overflow-y: auto;
-            border: 1px solid rgba(255,255,255,0.08);
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+
+            #structure-panel,
+            #record-panel {
+                top: 60px;
+                bottom: auto;
+                max-height: 60vh;
+                width: calc(100vw - 40px);
+                left: 20px;
+                right: 20px;
+            }
+
+            #record-panel {
+                top: auto;
+                bottom: 100px;
+            }
+
+            .controls {
+                padding: 10px;
+                gap: 8px;
+            }
+
+            .btn {
+                flex: 1;
+                padding: 10px 16px;
+                font-size: 13px;
+                min-width: auto;
+            }
         }
 
-        .log-entry {
-            padding: 6px 8px;
-            border-radius: 8px;
-            background: rgba(255, 255, 255, 0.05);
+        /* Common Elements */
+        input,
+        textarea,
+        button {
+            font-family: inherit;
         }
 
-        .log-entry.error {
-            color: #ffb8b8;
-            background: rgba(221, 69, 96, 0.18);
-        }
-
-        .log-entry.success {
-            color: #b6ffce;
-            background: rgba(27, 177, 124, 0.18);
-        }
-
-        #tagline {
-            margin: 0;
-            font-weight: 600;
-            font-size: 14px;
-            color: #9ac4ff;
-        }
-
-        .log-entry small {
-            display: block;
-            opacity: 0.6;
-            font-size: 11px;
-        }
-
-        #badge-registros {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            padding: 10px 16px;
-            border-radius: 999px;
-            background: rgba(0, 179, 104, 0.16);
-            color: #8fffd9;
-            font-weight: 700;
-            letter-spacing: 0.02em;
-        }
-
-        #structure-panel {
-            position: absolute;
-            left: 20px;
-            bottom: 20px;
-            width: min(360px, calc(100vw - 40px));
-            max-height: calc(100vh - 260px);
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            padding: 16px;
-            border-radius: 16px;
-            background: rgba(5, 10, 15, 0.85);
-            backdrop-filter: blur(14px);
-            color: #eef5ff;
-            font-size: 14px;
-            pointer-events: all;
-            overflow: hidden;
-        }
-
-        #structure-panel input[type="search"] {
+        input[type="search"],
+        input[type="date"],
+        textarea {
             width: 100%;
             padding: 10px;
-            border-radius: 10px;
-            border: 1px solid rgba(255,255,255,0.15);
-            background: rgba(255,255,255,0.05);
-            color: #eef5ff;
-            font-size: 14px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            box-sizing: border-box;
         }
 
         #tree-container {
             flex: 1;
             overflow-y: auto;
-            border-radius: 10px;
-            border: 1px solid rgba(255,255,255,0.08);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
             padding: 8px;
         }
 
-        .tree-node {
-            display: flex;
-            flex-direction: column;
-            margin-bottom: 4px;
-        }
-
         .tree-node-btn {
+            width: 100%;
             text-align: left;
+            background: transparent;
             border: none;
-            border-radius: 10px;
-            padding: 8px 10px;
-            background: rgba(255,255,255,0.04);
-            color: #eef5ff;
-            font-size: 13px;
+            color: #ddd;
+            padding: 4px 8px;
             cursor: pointer;
         }
 
         .tree-node-btn:hover {
-            background: rgba(0, 136, 255, 0.24);
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
         }
 
         .tree-children {
             margin-left: 12px;
-            padding-left: 8px;
-            border-left: 1px solid rgba(255,255,255,0.08);
-        }
-
-        #record-panel {
-            position: absolute;
-            top: 90px;
-            right: 20px;
-            width: min(320px, calc(100vw - 40px));
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            padding: 16px;
-            border-radius: 16px;
-            background: rgba(5, 10, 15, 0.85);
-            backdrop-filter: blur(14px);
-            color: #eef5ff;
-            font-size: 14px;
-            pointer-events: all;
-        }
-
-        #record-panel label {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            font-weight: 600;
-            font-size: 13px;
-        }
-
-        #record-panel input[type="date"] {
-            padding: 10px;
-            border-radius: 10px;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            background: rgba(255, 255, 255, 0.05);
-            color: #eef5ff;
-            font-size: 14px;
-        }
-
-        #record-panel textarea {
-            min-height: 70px;
-            padding: 10px;
-            border-radius: 10px;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            background: rgba(255, 255, 255, 0.05);
-            color: #eef5ff;
-            font-size: 14px;
-            resize: vertical;
-        }
-
-        #record-panel .status-toggle {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-weight: 600;
-        }
-
-        #selected-guid {
-            margin: 0;
-            font-size: 13px;
-            color: #9ac4ff;
-            word-break: break-all;
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         #btn-registrar {
             width: 100%;
-            padding: 12px 18px;
-            border-radius: 12px;
+            padding: 12px;
+            border-radius: 10px;
             border: none;
             background: #00b368;
             color: white;
-            font-size: 15px;
-            font-weight: 600;
+            font-weight: bold;
             cursor: pointer;
-            transition: opacity 0.15s ease;
-        }
-
-        #btn-registrar:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-        }
-
-        #file-input {
-            position: absolute;
-            width: 1px;
-            height: 1px;
-            padding: 0;
-            margin: -1px;
-            border: 0;
-            opacity: 0;
-            pointer-events: all;
-        }
-
-        @media (max-width: 768px) {
-            #log-panel {
-                width: calc(100vw - 40px);
-                max-height: 35vh;
-            }
-
-            #structure-panel {
-                position: static;
-                width: calc(100vw - 40px);
-                max-height: none;
-                margin: 20px;
-            }
-
-            #record-panel {
-                position: static;
-                width: calc(100vw - 40px);
-                margin: 80px 20px 0;
-            }
-
-            .controls {
-                flex-direction: column;
-                align-items: center;
-            }
-
-            .btn {
-                width: 100%;
-            }
         }
     </style>
 </head>
+
 <body>
-    <div id="viewer-container" aria-live="polite">
-        <div id="log-panel" aria-live="polite">
-            <p id="tagline">🛠️ Listo para cargar un IFC</p>
+    <div id="viewer-container"></div>
+
+    <div class="ui-layer">
+        <div class="top-bar">
+            <button class="panel-toggle" id="toggle-tree">🌳 Árbol</button>
+            <div id="badge-registros">0 registros</div>
+            <button class="panel-toggle" id="toggle-record">📝 Ficha</button>
         </div>
-        <div id="badge-registros">0 registros</div>
-        <div id="structure-panel">
-            <strong>Árbol IFC</strong>
-            <input type="search" id="tree-search" placeholder="Buscar elemento...">
-            <div id="tree-container">Carga un IFC para ver la estructura.</div>
+
+        <div id="structure-panel" class="panel hidden">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+                <strong>Estructura</strong>
+                <button class="panel-toggle" style="padding:4px 8px;font-size:12px;"
+                    onclick="document.getElementById('structure-panel').classList.add('hidden')">✕</button>
+            </div>
+            <input type="search" id="tree-search" placeholder="Buscar...">
+            <div id="tree-container">Carga un IFC...</div>
         </div>
-        <div id="record-panel">
-            <strong>Elemento seleccionado</strong>
-            <p id="selected-guid">Toca un elemento para registrarlo.</p>
-            <label>
-                Fecha de registro
+
+        <div id="record-panel" class="panel hidden-right">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+                <strong>Registro</strong>
+                <button class="panel-toggle" style="padding:4px 8px;font-size:12px;"
+                    onclick="document.getElementById('record-panel').classList.add('hidden-right')">✕</button>
+            </div>
+            <p id="selected-guid" style="font-size:12px;color:#aaa;margin:0 0 10px 0;">Selecciona un elemento</p>
+            <label style="display:block;margin-bottom:8px;">
+                <span style="font-size:12px;">Fecha</span>
                 <input type="date" id="input-fecha">
             </label>
-            <label class="status-toggle">
+            <label style="display:flex;align-items:center;gap:8px;margin-bottom:8px;font-size:13px;">
                 <input type="checkbox" id="input-construido" checked>
-                Marcar como construido
+                Construido
             </label>
-            <label>
-                Comentario
-                <textarea id="input-comentario" placeholder="Añade notas del elemento"></textarea>
-            </label>
-            <button id="btn-registrar" disabled>✅ Registrar elemento</button>
+            <textarea id="input-comentario" placeholder="Comentario..." style="margin-bottom:10px;"></textarea>
+            <button id="btn-registrar" disabled>Guardar</button>
+        </div>
+
+        <div class="controls">
+            <button class="btn" id="btn-abrir">📂 Abrir</button>
+            <button class="btn btn-green" id="btn-descargar" disabled>⬇️ CSV</button>
+            <button class="btn" id="btn-log" style="display:none;">Log</button>
+            <!-- Hidden log for mobile simplicity -->
         </div>
     </div>
 
-    <div class="controls">
-        <button class="btn" id="btn-abrir">📂 Abrir IFC</button>
-        <button class="btn btn-green" id="btn-descargar" disabled>⬇️ Descargar CSV</button>
-        <button class="btn" id="btn-log">📝 Exportar log</button>
-    </div>
-
-    <input type="file" id="file-input" accept=".ifc">
+    <input type="file" id="file-input" accept=".ifc, .txt, application/octet-stream" style="display:none;">
     <script type="module" src="./app.js"></script>
+    <script>
+        // Simple toggle logic inline to ensure it works immediately
+        document.getElementById('toggle-tree').addEventListener('click', () => {
+            document.getElementById('structure-panel').classList.toggle('hidden');
+        });
+        document.getElementById('toggle-record').addEventListener('click', () => {
+            document.getElementById('record-panel').classList.toggle('hidden-right');
+        });
+
+        // Auto-open record panel when selection happens (listener will be in app.js, but we can add a helper here)
+        window.openRecordPanel = () => {
+            document.getElementById('record-panel').classList.remove('hidden-right');
+        };
+    </script>
 </body>
+
 </html>
