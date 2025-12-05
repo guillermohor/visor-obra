@@ -407,7 +407,7 @@ async function handlePointerSelection(event) {
     }
     event.preventDefault();
     addLog(`Pointer up: ${event.pointerType}`, 'info');
-    await zoomToElementFromScene();
+    await selectElementFromScene();
 }
 
 function handleTouchPointerDown(event) {
