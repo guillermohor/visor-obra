@@ -405,7 +405,7 @@ async function handlePointerSelection(event) {
         return;
     }
     event.preventDefault();
-    await selectElementFromScene();
+    await zoomToElementFromScene();
 }
 
 function handleTouchPointerDown(event) {
@@ -424,7 +424,22 @@ function handleTouchPointerDown(event) {
 
 async function handleCanvasDoubleClick(event) {
     event.preventDefault();
-    await focusCurrentSelection();
+    await selectElementFromScene();
+}
+
+async function zoomToElementFromScene() {
+    try {
+        const selection = await viewer.IFC.selector.pickIfcItem();
+        if (!selection) {
+            return;
+        }
+        if (!hasModelGeometry(selection.modelID)) {
+            return;
+        }
+        await flashElement(selection.modelID, selection.id, { focus: true });
+    } catch (error) {
+        console.error(error);
+    }
 }
 
 async function selectElementFromScene(options) {
