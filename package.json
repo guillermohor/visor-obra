@@ -1,0 +1,29 @@
+{
+  "name": "visor-obra",
+  "version": "1.0.0",
+  "description": "Visor IFC offline para registro de elementos construidos en obra",
+  "scripts": {
+    "dev": "parcel serve index.html --port 1234",
+    "build": "parcel build index.html --public-url ./",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist"
+  },
+  "keywords": [
+    "ifc",
+    "pwa",
+    "construction"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "web-ifc-viewer": "^1.0.218"
+  },
+  "devDependencies": {
+    "@parcel/packager-raw-url": "^2.16.1",
+    "@parcel/transformer-webmanifest": "^2.16.1",
+    "buffer": "^6.0.3",
+    "gh-pages": "^6.3.0",
+    "parcel": "^2.12.0",
+    "process": "^0.11.10"
+  }
+}

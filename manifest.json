@@ -1,0 +1,21 @@
+{
+  "name": "Visor de Obra BIM",
+  "short_name": "Visor IFC",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#050a0f",
+  "theme_color": "#0b1620",
+  "description": "PWA para registrar elementos construidos desde modelos IFC offline",
+  "icons": [
+    {
+      "src": "./icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "./icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
