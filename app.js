@@ -405,6 +405,7 @@ async function handlePointerSelection(event) {
         return;
     }
     event.preventDefault();
+    addLog(`Pointer up: ${event.pointerType}`, 'info');
     await zoomToElementFromScene();
 }
 
@@ -431,13 +432,17 @@ async function zoomToElementFromScene() {
     try {
         const selection = await viewer.IFC.selector.pickIfcItem();
         if (!selection) {
+            addLog('Zoom: No selection found', 'info');
             return;
         }
         if (!hasModelGeometry(selection.modelID)) {
+            addLog('Zoom: No geometry', 'info');
             return;
         }
+        addLog(`Zooming to: ${selection.id}`, 'success');
         await flashElement(selection.modelID, selection.id, { focus: true });
     } catch (error) {
+        addLog('Zoom Error', 'error', error);
         console.error(error);
     }
 }
