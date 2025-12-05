@@ -1,0 +1,2 @@
+const CACHE_NAME="visor-ifc-cache-v1",OFFLINE_URLS=["./","./index.html","./app.js","./manifest.json","./icons/icon-192.png","./icons/icon-512.png"];self.addEventListener("install",e=>{e.waitUntil(caches.open(CACHE_NAME).then(e=>e.addAll(OFFLINE_URLS)))}),self.addEventListener("activate",e=>{e.waitUntil(caches.keys().then(e=>Promise.all(e.filter(e=>e!==CACHE_NAME).map(e=>caches.delete(e)))))}),self.addEventListener("fetch",e=>{e.respondWith(caches.match(e.request).then(t=>t||fetch(e.request)))});
+//# sourceMappingURL=sw.js.map

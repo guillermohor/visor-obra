@@ -1,0 +1,39 @@
+<!DOCTYPE html><html lang=es><script type=importmap>{"imports":{"3eBRw":"./web-ifc.98832ecb.wasm","czWhb":"./sw.js"}}</script><meta charset=UTF-8><meta name=viewport content="width=device-width, initial-scale=1.0, user-scalable=no"><meta name=theme-color content=#0b1620><link rel=manifest href=manifest.webmanifest><link rel=apple-touch-icon href=icon-192.42634e61.png><title>Visor de Obra BIM</title><style>:root{color-scheme:dark;font-family:Segoe UI,system-ui,-apple-system,sans-serif}body{background:#050a0f;margin:0;overflow:hidden}#viewer-container{background:radial-gradient(circle at top,#0e1b2b 0%,#050a0f 55%);width:100vw;height:100vh;position:relative}.controls{pointer-events:none;justify-content:center;gap:12px;display:flex;position:absolute;bottom:20px;left:20px;right:20px}.btn{pointer-events:all;color:#fff;cursor:pointer;background:#007bff;border:none;border-radius:50px;min-width:150px;padding:15px 25px;font-size:16px;transition:transform .1s;box-shadow:0 12px 30px #00000059}.btn:active{transform:scale(.97)}.btn-green{background:#00b368}.btn-outline{background:0 0;border:1px solid #ffffff4d}#btn-descargar:disabled{color:#fff6;cursor:not-allowed;background:#304355}#log-panel{backdrop-filter:blur(16px);color:#d6e8ff;pointer-events:all;background:#050a0fd9;border:1px solid #ffffff14;border-radius:16px;flex-direction:column;gap:6px;width:min(420px,100vw - 40px);max-height:65vh;padding:16px;font-size:13px;display:flex;position:absolute;top:20px;left:20px;overflow-y:auto}.log-entry{background:#ffffff0d;border-radius:8px;padding:6px 8px}.log-entry.error{color:#ffb8b8;background:#dd45602e}.log-entry.success{color:#b6ffce;background:#1bb17c2e}#tagline{color:#9ac4ff;margin:0;font-size:14px;font-weight:600}.log-entry small{opacity:.6;font-size:11px;display:block}#badge-registros{color:#8fffd9;letter-spacing:.02em;background:#00b36829;border-radius:999px;padding:10px 16px;font-weight:700;position:absolute;top:20px;right:20px}#structure-panel{backdrop-filter:blur(14px);color:#eef5ff;pointer-events:all;background:#050a0fd9;border-radius:16px;flex-direction:column;gap:10px;width:min(360px,100vw - 40px);max-height:calc(100vh - 260px);padding:16px;font-size:14px;display:flex;position:absolute;bottom:20px;left:20px;overflow:hidden}#structure-panel input[type=search]{color:#eef5ff;background:#ffffff0d;border:1px solid #ffffff26;border-radius:10px;width:100%;padding:10px;font-size:14px}#tree-container{border:1px solid #ffffff14;border-radius:10px;flex:1;padding:8px;overflow-y:auto}.tree-node{flex-direction:column;margin-bottom:4px;display:flex}.tree-node-btn{text-align:left;color:#eef5ff;cursor:pointer;background:#ffffff0a;border:none;border-radius:10px;padding:8px 10px;font-size:13px}.tree-node-btn:hover{background:#0088ff3d}.tree-children{border-left:1px solid #ffffff14;margin-left:12px;padding-left:8px}#record-panel{backdrop-filter:blur(14px);color:#eef5ff;pointer-events:all;background:#050a0fd9;border-radius:16px;flex-direction:column;gap:10px;width:min(320px,100vw - 40px);padding:16px;font-size:14px;display:flex;position:absolute;top:90px;right:20px}#record-panel label{flex-direction:column;gap:4px;font-size:13px;font-weight:600;display:flex}#record-panel input[type=date]{color:#eef5ff;background:#ffffff0d;border:1px solid #ffffff26;border-radius:10px;padding:10px;font-size:14px}#record-panel textarea{color:#eef5ff;resize:vertical;background:#ffffff0d;border:1px solid #ffffff26;border-radius:10px;min-height:70px;padding:10px;font-size:14px}#record-panel .status-toggle{align-items:center;gap:8px;font-weight:600;display:flex}#selected-guid{color:#9ac4ff;word-break:break-all;margin:0;font-size:13px}#btn-registrar{color:#fff;cursor:pointer;background:#00b368;border:none;border-radius:12px;width:100%;padding:12px 18px;font-size:15px;font-weight:600;transition:opacity .15s}#btn-registrar:disabled{opacity:.4;cursor:not-allowed}#file-input{opacity:0;pointer-events:all;border:0;width:1px;height:1px;margin:-1px;padding:0;position:absolute}@media (width<=768px){#log-panel{width:calc(100vw - 40px);max-height:35vh}#structure-panel{width:calc(100vw - 40px);max-height:none;margin:20px;position:static}#record-panel{width:calc(100vw - 40px);margin:80px 20px 0;position:static}.controls{flex-direction:column;align-items:center}.btn{width:100%}}</style><body>
+    <div id=viewer-container aria-live=polite>
+        <div id=log-panel aria-live=polite>
+            <p id=tagline>🛠️ Listo para cargar un IFC</p>
+        </div>
+        <div id=badge-registros>0 registros</div>
+        <div id=structure-panel>
+            <strong>Árbol IFC</strong>
+            <input type=search id=tree-search placeholder="Buscar elemento...">
+            <div id=tree-container>Carga un IFC para ver la estructura.</div>
+        </div>
+        <div id=record-panel>
+            <strong>Elemento seleccionado</strong>
+            <p id=selected-guid>Toca un elemento para registrarlo.</p>
+            <label>
+                Fecha de registro
+                <input type=date id=input-fecha>
+            </label>
+            <label class=status-toggle>
+                <input type=checkbox id=input-construido checked>
+                Marcar como construido
+            </label>
+            <label>
+                Comentario
+                <textarea id=input-comentario placeholder="Añade notas del elemento"></textarea>
+            </label>
+            <button id=btn-registrar disabled>✅ Registrar elemento</button>
+        </div>
+    </div>
+
+    <div class=controls>
+        <button class=btn id=btn-abrir>📂 Abrir IFC</button>
+        <button class="btn btn-green" id=btn-descargar disabled>⬇️ Descargar CSV</button>
+        <button class=btn id=btn-log>📝 Exportar log</button>
+    </div>
+
+    <input type=file id=file-input accept=.ifc>
+    <script type=module src=visor-obra.15b94540.js></script>
+
